@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useLocalStorage } from './useLocalStorage';
 
 export type TodoItemType = {
   id: number;
@@ -7,14 +8,12 @@ export type TodoItemType = {
 };
 
 export const useTodoList = () => {
-  const [tasks, setTasks] = useState<TodoItemType[]>(() => {
-    const tasksFromStorage = localStorage.getItem('tasks');
-    return tasksFromStorage ? JSON.parse(tasksFromStorage) : [];
-  });
+  const { getItem, setItem } = useLocalStorage();
+  const [tasks, setTasks] = useState<TodoItemType[]>(getItem('tasks'));
 
   useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-  }, [tasks]);
+    setItem(tasks);
+  }, [setItem, tasks]);
 
   const addTask = (text: string) => {
     setTasks([...tasks, { id: Date.now(), name: text, completed: false }]);
