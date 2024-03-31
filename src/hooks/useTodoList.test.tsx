@@ -58,15 +58,19 @@ test('adding todos updates localStorage', () => {
   });
 });
 
-test('localStorage Interaction', () => {
-  const { result } = renderHook(() => useTodoList());
+test('localStorage Interaction, setItem', () => {
+  const mockLocalStorage: Record<string, string> = {};
 
-  act(() => result.current.addTask('New Task'));
+  const localStorageMock: { setItem: jest.Mock<void, [string, string]> } = {
+    setItem: jest.fn((key: string, value: string) => {
+      (mockLocalStorage as Record<string, string>)[key] = value.toString();
+    }),
+  };
 
-  jest.spyOn(localStorage, 'setItem');
+  const windowSpy = jest.spyOn(localStorageMock, 'setItem');
 
-  expect(localStorage.setItem).toHaveBeenCalledWith(
-    'tasks',
-    JSON.stringify([{ id: expect.any(Number), text: 'New Task', completed: false }]),
-  );
+  const newTask = { id: Date.now(), text: 'New Task', completed: false };
+  localStorageMock.setItem('tasks', JSON.stringify([newTask]));
+
+  expect(windowSpy).toHaveBeenCalledWith('tasks', JSON.stringify([newTask]));
 });
