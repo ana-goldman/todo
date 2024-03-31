@@ -63,14 +63,14 @@ test('localStorage Interaction, setItem', () => {
 
   const localStorageMock: { setItem: jest.Mock<void, [string, string]> } = {
     setItem: jest.fn((key: string, value: string) => {
-      (mockLocalStorage as Record<string, string>)[key] = value.toString();
+      mockLocalStorage[key] = value.toString();
     }),
   };
 
   const windowSpy = jest.spyOn(localStorageMock, 'setItem');
 
   const newTask = { id: Date.now(), text: 'New Task', completed: false };
-  localStorageMock.setItem('tasks', JSON.stringify([newTask]));
+  localStorageMock.setItem('tasks', JSON.stringify(newTask));
 
-  expect(windowSpy).toHaveBeenCalledWith('tasks', JSON.stringify([newTask]));
+  expect(windowSpy).toHaveBeenCalledWith('tasks', JSON.stringify(newTask));
 });
