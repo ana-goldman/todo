@@ -9,7 +9,7 @@ export type TodoItemType = {
 
 export const useTodoList = () => {
   const { getItem, setItem } = useLocalStorage();
-  const [tasks, setTasks] = useState<TodoItemType[]>(getItem('tasks'));
+  const [tasks, setTasks] = useState<TodoItemType[]>(getItem('tasks') ?? []);
 
   useEffect(() => {
     setItem(tasks);
