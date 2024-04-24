@@ -11,10 +11,10 @@ jest.mock('./useLocalStorage', () => {
   });
   return {
     __esModule: true,
-    useLocalStorage: jest.fn(() => ({
+    useLocalStorage: () => ({
       getItem: mockedGetItem,
       setItem: mockedSetItem,
-    })),
+    }),
     storage,
   };
 });
@@ -34,12 +34,14 @@ describe('useTodoList', () => {
   });
 
   test('adding todos updates localStorage', () => {
-    renderHook(() => useTodoList());
+    const { result } = renderHook(() => useTodoList());
 
-    setItem([{ id: Date.now(), name: 'todo 1', completed: false }]);
-    const tasksInStorage = getItem('tasks');
+    act(() => {
+      result.current.addTask('todo 1');
+    });
 
-    expect(tasksInStorage).toContainEqual({
+    expect(result.current.tasks).toHaveLength(1);
+    expect(result.current.tasks).toContainEqual({
       id: expect.any(Number),
       name: 'todo 1',
       completed: false,
